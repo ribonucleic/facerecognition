@@ -9,14 +9,19 @@
 from PIL import Image, ImageOps
 from sklearn import svm
 import numpy as np
+import os
 
 np.random.seed(0)
-path='/home/axel/Documents/Teaching/MachineLearning/FEI_Face_database/frontalimages_manuallyaligned_bw/'
+path='faces/bw/'
 expression='a' #a is neutral, b is smiling
 faceid='1' #integer from 1 to 200, there are 200 faces in "frontalimages_manuallyaligned"
-im = Image.open(path+faceid+expression+'.jpg', 'r')
-pix=im.load()
-imagesize=im.size
+
+if not os.path.isdir('faces/bw'):
+  os.mkdir('faces/bw')
+  for myfile in os.listdir('faces/color'):
+    print myfile
+    img = Image.open('faces/color/'+myfile).convert('L')
+    img.save('faces/bw/'+myfile)
 
 #print pix[5,10] #Get the RGBA Value of the a pixel of an image, or the brightness for the folders that are black and white (they have a '_bw' suffix)
 # to transform RGB to black/white use: sqrt(0.299 * R^2 + 0.587 * G^2 + 0.114 * B^2)
@@ -81,6 +86,8 @@ print yout
 print ytest
 
 # now plot the separating face:
+im = Image.open(path+str(1)+expression+'.jpg', 'r')
+imagesize=im.size
 w = clf.coef_[0]
 t=clf.intercept_[0]
 img = Image.new( 'L', imagesize, "black") # create a new black image
