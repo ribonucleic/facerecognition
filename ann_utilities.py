@@ -1,18 +1,11 @@
 __author__ = 'tiago'
 
-import matplotlib.pyplot as plt
-import argparse
-from scipy.signal import gaussian
 from theano.tensor.nnet import conv
 import theano
 import theano.tensor as T
 import numpy as np
-import os
-import re
 from collections import OrderedDict
-from ioGenerator import ioGenerator
-import warnings
-import logging
+from theano.tensor.signal import downsample
 
 """
 This code comes from theano_lstm https://github.com/JonathanRaiman/theano_lstm
