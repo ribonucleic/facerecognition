@@ -8,12 +8,15 @@
 
 from PIL import Image, ImageOps
 from sklearn import svm
+from sklearn.cross_validation import train_test_split
+from sklearn.metrics import confusion_matrix
+import matplotlib.pyplot as plt
 import numpy as np
 from face_container import FaceContainer
 
 np.random.seed(0)
 
-fc = FaceContainer()
+fc = FaceContainer(feature='gender', maxshift=0, cutoff=50) #feature= 'smile' or 'gender', maxshift= maximum random shift applied to picture, also crops them by maxshift on all borders
 Xtrain, ytrain, Xtest, ytest = fc.getTestTrainData()
 
 #train support vector machine:
@@ -23,13 +26,20 @@ print clf.fit(Xtrain, ytrain)
 #test success:
 yout=clf.predict(Xtest)
 
-print sum(abs(np.array(yout)-np.array(ytest)))
-print yout
-print ytest
+# Compute confusion matrix
+cm = confusion_matrix(ytest, yout)
+np.set_printoptions(precision=2)
+print('Confusion matrix, without normalization')
+print(cm)
 
-# now plot the separating face:
+print  str(sum(abs(np.array(yout)-np.array(ytest)))) + ' wrong classifications out of ' + str(len(yout)) + ' pictures, pixel size is ' + str(fc.imagesize)
+#print yout
+#print ytest
+
+
+# now plot the weights as face to see what features are important (mouth area for smiles, many areas for gender):
 w = clf.coef_[0]
-t=clf.intercept_[0]
+t = clf.intercept_[0]
 img = Image.new( 'L', fc.imagesize, "black") # create a new black image
 pixels = img.load() # create the pixel map
 offs=min(w)
